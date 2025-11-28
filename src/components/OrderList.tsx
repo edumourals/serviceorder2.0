@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { StorageService } from '../services/storage';
+import { SupabaseService } from '../services/supabase';
 import { ServiceOrder, OrderStatus } from '../types';
-import { Search, Filter, Pencil, Trash2, Plus, Loader2, Printer } from 'lucide-react';
+import { Search, Filter, Pencil, Trash2, Plus, Loader2, Printer, Calendar, DollarSign, User } from 'lucide-react';
 
 interface OrderListProps {
   onEdit: (id: number) => void;
@@ -13,10 +14,24 @@ export const OrderList: React.FC<OrderListProps> = ({ onEdit, onCreate }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
+  const [companyName, setCompanyName] = useState<string>('SERVICE OS');
 
   useEffect(() => {
     loadOrders();
+    fetchCompanyData();
   }, []);
+
+  const fetchCompanyData = async () => {
+    try {
+      // Tenta pegar os metadados do usuário para exibir o nome da empresa na impressão
+      const user = await SupabaseService.auth.getUser();
+      if (user && user.user_metadata && user.user_metadata.company_name) {
+        setCompanyName(user.user_metadata.company_name.toUpperCase());
+      }
+    } catch (e) {
+      console.log('Erro ao carregar dados da empresa', e);
+    }
+  };
 
   const loadOrders = async () => {
     setLoading(true);
@@ -54,43 +69,44 @@ export const OrderList: React.FC<OrderListProps> = ({ onEdit, onCreate }) => {
                 margin: 0; 
                 padding: 0; 
                 font-family: 'Courier New', Courier, monospace; 
-                font-size: 12px; 
+                font-size: 11px; 
                 color: #000;
+                white-space: pre-wrap;
               }
               .ticket {
-                width: 78mm; /* Levemente menor que 80mm para margem de segurança */
+                width: 78mm;
                 max-width: 78mm;
-                padding: 10px;
+                padding: 2px 5px;
                 margin: 0 auto;
               }
               .center { text-align: center; }
               .bold { font-weight: bold; }
               .divider { 
                 border-top: 1px dashed #000; 
-                margin: 8px 0; 
+                margin: 4px 0; 
                 width: 100%;
               }
               .row { 
                 display: flex; 
                 justify-content: space-between; 
-                margin-bottom: 4px;
+                margin-bottom: 2px;
               }
               .label { font-weight: bold; margin-right: 5px; }
               .section-title {
-                margin-top: 10px;
+                margin-top: 8px;
                 font-weight: bold;
                 text-decoration: underline;
-                font-size: 13px;
+                font-size: 12px;
               }
-              .obs { font-size: 11px; font-style: italic; }
+              .obs { font-size: 10px; font-style: italic; white-space: pre-wrap; }
               .signature-area {
-                margin-top: 30px;
+                margin-top: 25px;
                 text-align: center;
                 border-top: 1px solid #000;
                 padding-top: 5px;
               }
-              h1 { font-size: 16px; margin: 5px 0; }
-              h2 { font-size: 14px; margin: 0; }
+              h1 { font-size: 14px; margin: 2px 0; font-weight: bold; }
+              h2 { font-size: 12px; margin: 0; }
               
               @media print {
                 .no-print { display: none; }
@@ -101,36 +117,30 @@ export const OrderList: React.FC<OrderListProps> = ({ onEdit, onCreate }) => {
           <body>
             <div class="ticket">
               <div class="center">
-                <h1>SERVICE OS</h1>
-                <h2>ORDEM DE SERVIÇO</h2>
+                <h1>${companyName}</h1>
+                <div style="font-size: 10px;">ORDEM DE SERVIÇO</div>
                 <div class="divider"></div>
-                <div style="font-size: 18px; font-weight: bold;">OS Nº ${order.id}</div>
-                <div>${new Date().toLocaleString('pt-BR')}</div>
+                <div style="font-size: 14px; font-weight: bold;">OS Nº ${order.id}</div>
+                <div style="font-size: 10px;">${new Date().toLocaleString('pt-BR')}</div>
               </div>
               
               <div class="divider"></div>
 
-              <div>
-                <span class="label">CLIENTE:</span> ${order.clientName}
-              </div>
-              <div>
-                <span class="label">FONE:</span> ${order.clientPhone || '-'}
-              </div>
+              <div><span class="label">CLIENTE:</span>${order.clientName}</div>
+              <div><span class="label">FONE:</span>${order.clientPhone || '-'}</div>
               
-              <div class="row" style="margin-top: 5px;">
-                <div><span class="label">DATA ABER.:</span> ${date}</div>
+              <div class="row">
+                <div><span class="label">ABERTURA:</span>${date}</div>
               </div>
               
               <div class="row">
-                <div><span class="label">STATUS:</span> ${order.status}</div>
+                <div><span class="label">STATUS:</span>${order.status}</div>
               </div>
 
               <div class="divider"></div>
 
-              <div class="section-title">DESCRIÇÃO DO SERVIÇO</div>
-              <div style="margin-top: 5px; line-height: 1.2;">
-                ${order.description}
-              </div>
+              <div class="section-title">DESCRIÇÃO</div>
+              <div style="margin-top: 2px; line-height: 1.1;">${order.description}</div>
 
               ${order.observations ? `
                 <div class="section-title">OBSERVAÇÕES</div>
@@ -140,11 +150,11 @@ export const OrderList: React.FC<OrderListProps> = ({ onEdit, onCreate }) => {
               <div class="divider"></div>
 
               <div class="row">
-                <span class="label">FORMA PAGTO:</span>
+                <span class="label">PAGAMENTO:</span>
                 <span>${order.paymentMethod || '-'}</span>
               </div>
 
-              <div class="row" style="font-size: 16px; margin-top: 10px;">
+              <div class="row" style="font-size: 14px; margin-top: 5px;">
                 <span class="bold">TOTAL:</span>
                 <span class="bold">${value}</span>
               </div>
@@ -153,7 +163,7 @@ export const OrderList: React.FC<OrderListProps> = ({ onEdit, onCreate }) => {
                 Assinatura do Cliente
               </div>
               
-              <div class="center" style="margin-top: 15px; font-size: 10px;">
+              <div class="center" style="margin-top: 10px; font-size: 9px;">
                 Obrigado pela preferência!
               </div>
             </div>
@@ -189,10 +199,10 @@ export const OrderList: React.FC<OrderListProps> = ({ onEdit, onCreate }) => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h2 className="text-3xl font-bold text-slate-800">Ordens de Serviço</h2>
+        <h2 className="text-2xl md:text-3xl font-bold text-slate-800">Ordens de Serviço</h2>
         <button
           onClick={onCreate}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm"
+          className="w-full md:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 md:py-2 rounded-lg font-medium transition-colors shadow-sm"
         >
           <Plus size={20} />
           Nova Ordem
@@ -207,7 +217,7 @@ export const OrderList: React.FC<OrderListProps> = ({ onEdit, onCreate }) => {
             placeholder="Buscar por cliente..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+            className="w-full pl-10 pr-4 py-3 md:py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
           />
         </div>
         
@@ -216,93 +226,141 @@ export const OrderList: React.FC<OrderListProps> = ({ onEdit, onCreate }) => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none appearance-none bg-white transition-all cursor-pointer"
+            className="w-full pl-10 pr-4 py-3 md:py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none appearance-none bg-white transition-all cursor-pointer"
           >
             <option value="all">Todos os status</option>
-            {Object.values(OrderStatus).map(status => (
+            {(Object.values(OrderStatus) as string[]).map(status => (
               <option key={status} value={status}>{status}</option>
             ))}
           </select>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-slate-50 border-b border-slate-200">
-              <tr>
-                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">ID</th>
-                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Cliente</th>
-                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Data Abertura</th>
-                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Valor</th>
-                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
-                    <div className="flex flex-col items-center justify-center gap-2">
-                       <Loader2 className="animate-spin" size={24} />
-                       <span>Buscando ordens...</span>
-                    </div>
-                  </td>
-                </tr>
-              ) : filteredOrders.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
-                    Nenhuma ordem de serviço encontrada.
-                  </td>
-                </tr>
-              ) : (
-                filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 text-sm font-medium text-slate-900">#{order.id}</td>
-                    <td className="px-6 py-4 text-sm text-slate-700">{order.clientName}</td>
-                    <td className="px-6 py-4 text-sm text-slate-500">
-                      {new Date(order.openDate).toLocaleDateString('pt-BR')}
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-slate-700">
-                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(order.value)}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => handlePrint(order)}
-                          className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                          title="Imprimir Cupom 80mm"
-                        >
-                          <Printer size={18} />
-                        </button>
-                        <button
-                          onClick={() => onEdit(order.id)}
-                          className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="Editar"
-                        >
-                          <Pencil size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(order.id)}
-                          className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Excluir"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-12 text-slate-500">
+           <Loader2 className="animate-spin mb-2" size={32} />
+           <span>Buscando ordens...</span>
         </div>
-      </div>
+      ) : filteredOrders.length === 0 ? (
+        <div className="text-center py-12 text-slate-500 bg-white rounded-xl border border-slate-200">
+          Nenhuma ordem de serviço encontrada.
+        </div>
+      ) : (
+        <>
+          {/* MODO MOBILE: CARDS */}
+          <div className="md:hidden space-y-4">
+            {filteredOrders.map(order => (
+              <div key={order.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <span className="text-xs font-bold text-slate-400">#{order.id}</span>
+                    <h3 className="font-bold text-slate-900 text-lg flex items-center gap-2">
+                       {order.clientName}
+                    </h3>
+                  </div>
+                  <span className={`px-2 py-1 rounded-full text-xs font-bold ${getStatusColor(order.status)}`}>
+                    {order.status}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between text-sm text-slate-600 border-t border-slate-100 pt-3">
+                  <div className="flex items-center gap-1.5">
+                    <Calendar size={14} className="text-slate-400" />
+                    {new Date(order.openDate).toLocaleDateString('pt-BR')}
+                  </div>
+                  <div className="flex items-center gap-1.5 font-semibold text-slate-800">
+                    <DollarSign size={14} className="text-slate-400" />
+                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(order.value)}
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                   <button
+                    onClick={() => handlePrint(order)}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    <Printer size={16} /> Imprimir
+                  </button>
+                  <button
+                    onClick={() => onEdit(order.id)}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    <Pencil size={16} /> Editar
+                  </button>
+                  <button
+                    onClick={() => handleDelete(order.id)}
+                    className="flex-none p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* MODO DESKTOP: TABELA */}
+          <div className="hidden md:block bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-slate-50 border-b border-slate-200">
+                  <tr>
+                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">ID</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Cliente</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Data Abertura</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Valor</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredOrders.map((order) => (
+                    <tr key={order.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 text-sm font-medium text-slate-900">#{order.id}</td>
+                      <td className="px-6 py-4 text-sm text-slate-700">{order.clientName}</td>
+                      <td className="px-6 py-4 text-sm text-slate-500">
+                        {new Date(order.openDate).toLocaleDateString('pt-BR')}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-medium text-slate-700">
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(order.value)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => handlePrint(order)}
+                            className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                            title="Imprimir Cupom 80mm"
+                          >
+                            <Printer size={18} />
+                          </button>
+                          <button
+                            onClick={() => onEdit(order.id)}
+                            className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="Editar"
+                          >
+                            <Pencil size={18} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(order.id)}
+                            className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Excluir"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

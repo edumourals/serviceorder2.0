@@ -2,10 +2,10 @@ import React from 'react';
 import { PenTool } from 'lucide-react';
 
 export const LandingHeader: React.FC = () => {
-  const scrollToLogin = () => {
-    const authSection = document.getElementById('auth-section');
-    if (authSection) {
-      authSection.scrollIntoView({ behavior: 'smooth' });
+  const scrollToSection = (id: string) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -25,13 +25,29 @@ export const LandingHeader: React.FC = () => {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          <a href="#" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Planos</a>
-          <a href="#" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Suporte</a>
+          <button 
+            onClick={() => scrollToSection('pricing-section')} 
+            className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+          >
+            Planos
+          </button>
+          <button 
+             onClick={() => scrollToSection('features-section')}
+             className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+          >
+            Recursos
+          </button>
+          <button 
+             onClick={() => scrollToSection('support-section')}
+             className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+          >
+            Suporte
+          </button>
         </nav>
 
         {/* CTA Button */}
         <button 
-          onClick={scrollToLogin}
+          onClick={() => scrollToSection('auth-section')}
           className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all border border-white/10"
         >
           Acessar Sistema

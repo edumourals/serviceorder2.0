@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -21,7 +20,9 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker
       .register('/sw.js')
       .then((registration) => {
-        console.log('SW registrado com sucesso: ', registration.scope);
+        console.log('SW registrado: ', registration.scope);
+        // Tenta atualizar o SW imediatamente para garantir que o preview pegue o código novo
+        registration.update();
       })
       .catch((err) => {
         console.log('Falha ao registrar SW: ', err);

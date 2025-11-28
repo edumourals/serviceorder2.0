@@ -87,12 +87,12 @@ export const OrderForm: React.FC<OrderFormProps> = ({ editId, onClose, onSave })
         >
           <ArrowLeft size={24} />
         </button>
-        <h2 className="text-3xl font-bold text-slate-800">
-          {editId ? 'Editar Ordem de Serviço' : 'Nova Ordem de Serviço'}
+        <h2 className="text-2xl md:text-3xl font-bold text-slate-800">
+          {editId ? 'Editar Ordem' : 'Nova Ordem'}
         </h2>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-sm border border-slate-200 space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white p-5 md:p-8 rounded-xl shadow-sm border border-slate-200 space-y-6">
         
         {/* Row 1 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -103,7 +103,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({ editId, onClose, onSave })
               name="clientName"
               value={formData.clientName}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 md:py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
               required
             />
           </div>
@@ -114,7 +114,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({ editId, onClose, onSave })
               name="clientPhone"
               value={formData.clientPhone}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 md:py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
             />
           </div>
         </div>
@@ -127,7 +127,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({ editId, onClose, onSave })
             value={formData.description}
             onChange={handleChange}
             rows={3}
-            className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none"
+            className="w-full px-4 py-3 md:py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none"
             required
           />
         </div>
@@ -141,7 +141,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({ editId, onClose, onSave })
               name="openDate"
               value={formData.openDate}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 md:py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
               required
             />
           </div>
@@ -152,7 +152,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({ editId, onClose, onSave })
               name="closeDate"
               value={formData.closeDate || ''}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 md:py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
             />
           </div>
         </div>
@@ -167,7 +167,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({ editId, onClose, onSave })
               step="0.01"
               value={formData.value}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 md:py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
             />
           </div>
            <div className="space-y-2">
@@ -176,9 +176,9 @@ export const OrderForm: React.FC<OrderFormProps> = ({ editId, onClose, onSave })
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white"
+              className="w-full px-4 py-3 md:py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white"
             >
-              {Object.values(OrderStatus).map(s => (
+              {(Object.values(OrderStatus) as string[]).map(s => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
@@ -189,10 +189,10 @@ export const OrderForm: React.FC<OrderFormProps> = ({ editId, onClose, onSave })
               name="paymentMethod"
               value={formData.paymentMethod}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white"
+              className="w-full px-4 py-3 md:py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white"
             >
               <option value="">Selecione...</option>
-              {Object.values(PaymentMethod).map(p => (
+              {(Object.values(PaymentMethod) as string[]).map(p => (
                 <option key={p} value={p}>{p}</option>
               ))}
             </select>
@@ -207,17 +207,17 @@ export const OrderForm: React.FC<OrderFormProps> = ({ editId, onClose, onSave })
             value={formData.observations}
             onChange={handleChange}
             rows={4}
-            className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none"
+            className="w-full px-4 py-3 md:py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none"
           />
         </div>
 
         {/* Buttons */}
-        <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
+        <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 flex-col-reverse md:flex-row">
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="px-6 py-2 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition-colors flex items-center gap-2 disabled:opacity-50"
+            className="w-full md:w-auto px-6 py-3 md:py-2 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           >
             <X size={18} />
             Cancelar
@@ -225,7 +225,7 @@ export const OrderForm: React.FC<OrderFormProps> = ({ editId, onClose, onSave })
           <button
             type="submit"
             disabled={saving}
-            className="px-6 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2 disabled:opacity-50"
+            className="w-full md:w-auto px-6 py-3 md:py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
             {saving ? 'Salvando...' : 'Salvar'}

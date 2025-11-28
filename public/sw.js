@@ -1,9 +1,10 @@
 
-const CACHE_NAME = 'service-os-v16';
+const CACHE_NAME = 'service-os-v17';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/manifest.json',
+  '/logo.svg'
 ];
 
 // Instalação do Service Worker

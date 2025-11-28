@@ -34,3 +34,13 @@ export interface DashboardStats {
   revenueThisMonth: number;
   byStatus: { name: string; value: number }[];
 }
+
+export type SubscriptionStatus = 'trial' | 'active' | 'past_due' | 'canceled' | 'unpaid';
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  company_name: string;
+  subscription_status: SubscriptionStatus;
+  subscription_end_date: string;
+}

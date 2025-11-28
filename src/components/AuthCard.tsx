@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SupabaseService } from '../services/supabase';
-import { Loader2, Mail, Lock, ArrowRight, KeyRound, Sparkles, Check } from 'lucide-react';
+import { Loader2, Mail, Lock, ArrowRight, KeyRound, Sparkles, Check, Building2 } from 'lucide-react';
 
 type AuthMode = 'login' | 'register' | 'forgot';
 
@@ -8,6 +8,7 @@ export const AuthCard: React.FC = () => {
   const [mode, setMode] = useState<AuthMode>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [companyName, setCompanyName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -23,7 +24,7 @@ export const AuthCard: React.FC = () => {
         const { error } = await SupabaseService.auth.signIn(email, password);
         if (error) throw error;
       } else if (mode === 'register') {
-        const { error } = await SupabaseService.auth.signUp(email, password);
+        const { error } = await SupabaseService.auth.signUp(email, password, companyName);
         if (error) throw error;
         setMessage('Conta criada! Verifique seu e-mail para confirmar.');
         setMode('login');
@@ -89,6 +90,26 @@ export const AuthCard: React.FC = () => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        
+        {/* Campo Nome da Empresa (Apenas no Registro) */}
+        {mode === 'register' && (
+          <div className="space-y-1.5 animate-fade-in-up">
+            <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Nome da Empresa</label>
+            <div className="relative group">
+              <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors" size={20} />
+              <input
+                type="text"
+                required
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                style={{ colorScheme: 'light' }}
+                className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all duration-200 font-medium text-slate-900 placeholder:text-slate-400"
+                placeholder="Ex: Gráfica Rápida"
+              />
+            </div>
+          </div>
+        )}
+
         <div className="space-y-1.5">
           <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Seu E-mail</label>
           <div className="relative group">
@@ -99,7 +120,7 @@ export const AuthCard: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={{ colorScheme: 'light' }}
-              className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-200 font-medium text-slate-900 placeholder:text-slate-400"
+              className={`w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white outline-none transition-all duration-200 font-medium text-slate-900 placeholder:text-slate-400 ${mode === 'register' ? 'focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10' : 'focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'}`}
               placeholder="seu@email.com"
             />
           </div>
@@ -117,7 +138,7 @@ export const AuthCard: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 style={{ colorScheme: 'light' }}
-                className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-200 font-medium text-slate-900 placeholder:text-slate-400"
+                className={`w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white outline-none transition-all duration-200 font-medium text-slate-900 placeholder:text-slate-400 ${mode === 'register' ? 'focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10' : 'focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10'}`}
                 placeholder="******"
               />
             </div>

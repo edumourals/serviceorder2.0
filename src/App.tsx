@@ -9,6 +9,8 @@ import { LandingHeader } from './components/LandingHeader';
 import { LandingFeatures } from './components/LandingFeatures';
 import { LandingSteps } from './components/LandingSteps';
 import { LandingPricing } from './components/LandingPricing';
+import { LandingSupport } from './components/LandingSupport';
+import { SubscriptionGuard } from './components/SubscriptionGuard';
 import { supabase, SupabaseService } from './services/supabase';
 import { Loader2 } from 'lucide-react';
 
@@ -88,6 +90,9 @@ const App: React.FC = () => {
         {/* SECTION 4: STEPS */}
         <LandingSteps />
 
+        {/* SECTION 5: SUPPORT */}
+        <LandingSupport />
+
         {/* FOOTER SIMPLE */}
         <footer className="bg-slate-950 py-12 border-t border-white/5 text-center">
           <p className="text-slate-500 text-sm mb-2">© {new Date().getFullYear()} ServiceOS. Todos os direitos reservados.</p>
@@ -99,7 +104,7 @@ const App: React.FC = () => {
   }
 
   // ====================================================================
-  // MODO LOGADO: SISTEMA
+  // MODO LOGADO: SISTEMA (COM PROTEÇÃO DE ASSINATURA)
   // ====================================================================
 
   const handleNavigate = (view: ViewState) => {
@@ -125,24 +130,26 @@ const App: React.FC = () => {
   };
 
   return (
-    <Layout currentView={currentView} onNavigate={handleNavigate}>
-      {currentView === 'dashboard' && <Dashboard />}
-      
-      {currentView === 'list' && (
-        <OrderList 
-          onEdit={handleEditOrder} 
-          onCreate={handleCreateOrder} 
-        />
-      )}
-      
-      {currentView === 'form' && (
-        <OrderForm 
-          editId={editingId} 
-          onClose={() => setCurrentView('list')} 
-          onSave={handleSave} 
-        />
-      )}
-    </Layout>
+    <SubscriptionGuard>
+      <Layout currentView={currentView} onNavigate={handleNavigate}>
+        {currentView === 'dashboard' && <Dashboard />}
+        
+        {currentView === 'list' && (
+          <OrderList 
+            onEdit={handleEditOrder} 
+            onCreate={handleCreateOrder} 
+          />
+        )}
+        
+        {currentView === 'form' && (
+          <OrderForm 
+            editId={editingId} 
+            onClose={() => setCurrentView('list')} 
+            onSave={handleSave} 
+          />
+        )}
+      </Layout>
+    </SubscriptionGuard>
   );
 };
 

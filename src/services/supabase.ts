@@ -43,14 +43,28 @@ export const SupabaseService = {
       return data.session;
     },
 
+    async getUser() {
+      if (!supabase) return null;
+      const { data } = await supabase.auth.getUser();
+      return data.user;
+    },
+
     async signIn(email: string, password: string) {
       if (!supabase) throw new Error("Supabase não configurado");
       return supabase.auth.signInWithPassword({ email, password });
     },
 
-    async signUp(email: string, password: string) {
+    async signUp(email: string, password: string, companyName?: string) {
       if (!supabase) throw new Error("Supabase não configurado");
-      return supabase.auth.signUp({ email, password });
+      return supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: {
+            company_name: companyName
+          }
+        }
+      });
     },
 
     async signOut() {
