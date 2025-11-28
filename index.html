@@ -10,13 +10,15 @@
     />
     <title>Service Order Manager</title>
 
-    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <link rel="apple-touch-icon" href="/logo.svg" />
+    <!-- Ícones (opcional, pode remover se não tiver o arquivo) -->
+    <!-- <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="apple-touch-icon" href="/logo.svg" /> -->
 
+    <!-- Manifest e CSS opcional -->
     <link rel="manifest" href="/manifest.json" />
     <link rel="stylesheet" href="/index.css" />
 
-    <!-- Tailwind via CDN (opcional, mas não quebra o build) -->
+    <!-- Tailwind via CDN (opcional, não quebra o build do Vite) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -49,7 +51,7 @@
   <body class="bg-slate-900 text-slate-100">
     <div id="root"></div>
 
-    <!-- ENTRADA DO VITE: seu React começa aqui -->
+    <!-- Entrada do React/Vite -->
     <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>
